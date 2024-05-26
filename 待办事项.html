@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./vue.js"></script>
+    <style>
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        ul,
+        ol,
+        li {
+            list-style: none;
+        }
+
+        .container {
+            width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            min-height: 600px;
+        }
+
+        .list-add ul {
+            max-height: 340px;
+            overflow-y: auto;
+        }
+
+        .left-panel {
+            margin-top: 50px;
+            width: 30%;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            min-height: 600px;
+        }
+
+        .right-panel {
+            width: 70%;
+            padding: 20px;
+            box-sizing: border-box;
+            min-height: 600px;
+        }
+
+        .header {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header input[type="text"] {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .lists button,
+        .addlists button,
+        .button-style {
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgb(255, 255, 255);
+            color: #333;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-align: left;
+        }
+
+        .lists button:hover,
+        .addlists button:hover,
+        .button-style:hover {
+            background-color: #78b4f4;
+        }
+
+        .lists hr {
+            margin: 10px 0;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+
+        .list-add {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            min-height: 400px;
+        }
+
+        .list-add ul {
+            flex: 1;
+            padding-left: 0px;
+        }
+
+        .list-add button {
+            margin-top: 20px;
+        }
+
+        .list-container h1 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .list-container ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .list-container li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .list-container li input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .list-container li label {
+            flex-grow: 1;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .delete-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #dc3545;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="text"],
+        input[type="checkbox"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .delete-btn {
+            padding: 10px 15px;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .hide-completed {
+            margin-right: 10px;
+            color: #777;
+            cursor: pointer;
+        }
+
+        h1 {
+            width: 90px;
+            display: inline-block;
+        }
+
+        .hide-completed:hover,
+        .clean-completed:hover {
+            color: #007bff;
+        }
+
+        .hide-completed {
+            margin-left: 450px;
+        }
+
+
+        .list-container li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-checkbox {
+            line-height: 40px;
+            margin-right: 10px;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            margin-left: auto;
+        }
+
+        .addfinish {
+            width: 730px;
+            position: fixed;
+            bottom: 265px;
+        }
+
+        .addfinish input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .All-list {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .list-add button.edit-btn {
+            margin-top: 20px;
+        }
+
+        .list-add input[type="text"] {
+            display: none;
+        }
+
+        .list-add span {
+            cursor: pointer;
+        }
+
+        .list-item-name input[type="text"] {
+            display: none;
+        }
+
+        .list-item-name span {
+            cursor: pointer;
+        }
+
+        .completed-task {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div id="app" class="container">
+        <!-- 左侧面板 -->
+        <div class="left-panel">
+            <!-- 头部 -->
+            <div class="header">
+                <input type="text" placeholder="搜索" v-model="searchQuery" @input="searchTasks" aria-label="搜索任务">
+            </div>
+            <!-- 列表 -->
+            <div class="lists">
+                <button class="button-style" @click="toggleTab('所有')">所有</button>
+                <button class="button-style" @click="toggleTab('今天')">今天</button>
+                <button class="button-style" @click="toggleTab('最近七天')">最近七天</button>
+                <hr>
+            </div>
+            <!-- 新建列表 -->
+            <div class="list-add">
+                <ul>
+                    <li v-for="(list, index) in lists" :key="index">
+                        <input type="text" v-model="newListName" @keyup.enter="addNewList">
+                        <button v-if="!list.editing" class="button-style" @dblclick="startRename(index)">新建列表</button>
+                    </li>
+                </ul>
+                <span @click="addNewList"><b>+</b>新建列表</span>
+            </div>
+        </div>
+        <!-- 右侧面板 -->
+        <div class="right-panel">
+            <!-- 列表容器 -->
+            <div class="list-container">
+                <!-- 所有列表 -->
+                <div class="All-list">
+                    <h1>{{ activeTab }}</h1>
+                    <span class="hide-completed" @click="toggleHideCompleted">
+                        {{ hideCompleted ? '显示已完成' : '隐藏已完成' }}
+                    </span>
+                    &emsp;
+                    <span class="clean-completed" @click="clearCompleted">清理已完成</span>
+                </div>
+                <!-- 任务列表 -->
+                <ul class="list-add-list" style="max-height: 465px; overflow-y: auto;">
+                    <li v-for="(task, index) in filteredTasks" :key="index" v-if="!task.completed || !hideCompleted">
+                        <input type="checkbox" class="task-checkbox" v-model="task.completed" aria-label="完成任务">
+                        <label :for="'task'+index" :class="{ 'completed-task': task.completed }">{{ task.name }}</label>
+                        <button class="delete-btn" @click="deleteTask(index)">删除</button>
+                    </li>
+                </ul>
+                <!-- 新建任务 -->
+                <div class="addfinish">
+                    <input type="text" placeholder="+新建待办事项" v-model="newTaskName" @keyup.enter="addTask">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                activeTab: '所有',
+                searchQuery: '',
+                hideCompleted: false,
+                newTaskName: '',
+                tasks: [
+                    { name: '任务1', completed: false, date: new Date() },
+                    { name: '任务2', completed: false, date: new Date() },
+                    { name: '任务3', completed: false, date: new Date() },
+                ],
+                lists: [],
+                newListName: '',
+                editListIndex: null,
+                showNewListInput: false,
+            },
+            computed: {
+                filteredTasks() {
+                    return this.tasks.filter(task => {
+                        return task.name.toLowerCase().includes(this.searchQuery.toLowerCase()) &&
+                            (this.activeTab === '所有' ||
+                                (this.activeTab === '今天' && !task.completed && task.date === new Date()) ||
+                                (this.activeTab === '最近七天' && !task.completed && task.date >= new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)) ||
+                                (this.activeTab === '待办事项' && !task.completed));
+                    });
+                }
+            },
+            methods: {
+                //所有
+                searchTasks() {
+                    this.activeTab = '所有';
+                    this.hideCompleted = false;
+                },
+                renameList(index) {
+                    this.lists[index].editing = true;
+                },
+                //添加任务
+                addTask() {
+                    if (this.newTaskName.trim() !== '') {
+                        const newTask = { name: this.newTaskName, completed: false, date: new Date() };
+                        if (newTask.completed) {
+                            const index = this.tasks.indexOf(newTask);
+                            this.tasks.splice(index, 1);
+                            this.tasks.push(newTask);
+                        } else {
+                            // 否则将新任务添加到未完成任务的前面
+                            this.tasks.unshift(newTask);
+                        }
+                        this.newTaskName = '';
+                    }
+                },
+                //删除任务
+                deleteTask(index) {
+                    this.tasks.splice(index, 1);
+                },
+                //清理已完成
+                clearCompleted() {
+                    this.tasks = this.tasks.filter(task => !task.completed);
+                },
+                //显示已完成
+                startListnar(index) {
+                    // 设置当前正在编辑的列表项的索引
+                    this.editingListIndex = index;
+                    // 设置相应的列表项的编辑状态为 true
+                    this.lists[index].editing = true;
+                },
+                // 添加新列表
+                addNewList() {
+                    const newList = {
+                        name: this.newListName,
+                        editing: false,
+                        tasks: [],
+                    };
+                    this.lists.push(newList);
+                    this.newListName = '';
+                    this.showNewListInput = false;
+                },
+                //跳转到指定列表
+                toggleTab(tab) {
+                    this.activeTab = tab;
+                },
+                toggleHideCompleted() {
+                    this.hideCompleted = !this.hideCompleted;
+                },
+                startRename(index) {
+                    this.lists.forEach((list, i) => {
+                        list.editing = i === index;
+                    });
+                },
+                finishRename(index) {
+                    this.lists[index].editing = false;
+                },
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
